@@ -1,0 +1,44 @@
+requirements.txt# Core Dependencies
+pandas==2.0.3
+numpy==1.24.3
+pydantic==2.0.2
+python-dateutil==2.8.2
+
+# LLM Integration
+openai==0.27.8
+
+# Web Framework (for YouTube app)
+fastapi==0.100.0
+uvicorn==0.23.1
+python-multipart==0.0.6
+
+# Database
+SQLAlchemy==2.0.20
+psycopg2-binary==2.9.7  # PostgreSQL adapter
+
+# Authentication
+python-jose==3.3.0
+passlib==1.7.4
+bcrypt==4.0.1
+
+# Google API
+google-auth==2.22.0
+google-auth-oauthlib==1.0.0
+google-auth-httplib2==0.1.0
+google-api-python-client==2.92.0
+
+# Logging & Monitoring
+python-logging==2.14.2
+
+# Testing
+pytest==7.4.0
+pytest-cov==4.1.0
+
+# Development
+black==23.7.0
+flake8==6.0.0
+mypy==1.4.1
+
+# Utilities
+python-dotenv==1.0.0
+requests==2.31.0
