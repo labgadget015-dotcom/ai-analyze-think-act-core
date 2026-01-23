@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Intelligence SaaS Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .status {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-left: 5px solid #667eea;
+        }
+        
+        .metric-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .metric-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .metric-change {
+            font-size: 14px;
+            color: #888;
+        }
+        
+        .metric-change.positive {
+            color: #4caf50;
+        }
+        
+        .metric-change.negative {
+            color: #f44336;
+        }
+        
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 15px;
+        }
+        
+        .goals-list {
+            list-style: none;
+        }
+        
+        .goals-list li {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .goal-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .goal-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .progress-bar {
+            width: 150px;
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 65%;
+        }
+        
+        .auth-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .auth-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .auth-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .recommendation {
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            border-radius: 5px;
+        }
+        
+        .recommendation h4 {
+            color: #2e7d32;
+            margin-bottom: 8px;
+        }
+        
+        .recommendation p {
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎬 YouTube Intelligence SaaS Dashboard</h1>
+            <p class="status">Real-time channel analytics and AI-powered recommendations</p>
+        </header>
+        
+        <!-- Metrics Grid -->
+        <div class="dashboard-grid">
+            <div class="metric-card">
+                <h3>Total Subscribers</h3>
+                <div class="metric-value">125.4K</div>
+                <div class="metric-change positive">↑ +12.5% this month</div>
+            </div>
+            
+            <div class="metric-card">
+                <h3>Avg. CTR</h3>
+                <div class="metric-value">6.8%</div>
+                <div class="metric-change positive">↑ +1.2% this month</div>
+            </div>
+            
+            <div class="metric-card">
+                <h3>Total Watch Hours</h3>
+                <div class="metric-value">45.2K</div>
+                <div class="metric-change positive">↑ +8.3% this month</div>
+            </div>
+        </div>
+        
+        <!-- Authentication Section -->
+        <div class="section">
+            <h2>🔐 YouTube Connection</h2>
+            <div class="auth-section">
+                <p>Connect your YouTube channel to start receiving AI-powered analytics and recommendations.</p>
+                <button class="auth-button" onclick="initiateYouTubeAuth()">Connect YouTube Channel</button>
+            </div>
+        </div>
+        
+        <!-- Goals Section -->
+        <div class="section">
+            <h2>🎯 Channel Growth Goals</h2>
+            <ul class="goals-list">
+                <li>
+                    <span class="goal-name">Grow Subscribers</span>
+                    <div class="goal-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%;"></div>
+                        </div>
+                        <span>65%</span>
+                    </div>
+                </li>
+                <li>
+                    <span class="goal-name">Increase CTR</span>
+                    <div class="goal-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 48%;"></div>
+                        </div>
+                        <span>48%</span>
+                    </div>
+                </li>
+                <li>
+                    <span class="goal-name">Boost Watch Time</span>
+                    <div class="goal-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 72%;"></div>
+                        </div>
+                        <span>72%</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- AI Recommendations -->
+        <div class="section">
+            <h2>💡 AI-Powered Recommendations</h2>
+            <div class="recommendation">
+                <h4>Optimize Video Titles</h4>
+                <p>Analysis shows that adding power words ("MUST", "AMAZING") in titles increases CTR by 15-20%. Current titles are missing engagement triggers.</p>
+            </div>
+            <div class="recommendation">
+                <h4>Increase Upload Frequency</h4>
+                <p>Your audience engagement peaks on Tuesday and Thursday. Publishing 2 videos weekly on these days could boost subscriber growth by 25%.</p>
+            </div>
+            <div class="recommendation">
+                <h4>Focus on Playlist Strategy</h4>
+                <p>Videos in curated playlists show 3x higher average watch time. Create themed playlists to improve overall watch time metrics.</p>
+            </div>
+        </div>
+        
+        <!-- Latest Reports -->
+        <div class="section">
+            <h2>📊 Latest Analysis Reports</h2>
+            <div class="analytics-grid">
+                <div style="padding: 20px; background: #f5f5f5; border-radius: 5px;">
+                    <h4 style="margin-bottom: 10px;">Weekly Report</h4>
+                    <p style="color: #666; font-size: 14px;">Last updated: Today, 2:45 PM</p>
+                </div>
+                <div style="padding: 20px; background: #f5f5f5; border-radius: 5px;">
+                    <h4 style="margin-bottom: 10px;">Monthly Analysis</h4>
+                    <p style="color: #666; font-size: 14px;">Last updated: Jan 23, 2026</p>
+                </div>
+                <div style="padding: 20px; background: #f5f5f5; border-radius: 5px;">
+                    <h4 style="margin-bottom: 10px;">Competitive Benchmark</h4>
+                    <p style="color: #666; font-size: 14px;">Last updated: Jan 20, 2026</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>&copy; 2026 YouTube Intelligence SaaS | Powered by AI Analytics Framework</p>
+        </footer>
+    </div>
+    
+    <script>
+        function initiateYouTubeAuth() {
+            // Call backend endpoint to get authorization URL
+            fetch('/auth/youtube/connect')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.authorization_url) {
+                        window.location.href = data.authorization_url;
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
