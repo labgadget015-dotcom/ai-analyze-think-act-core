@@ -66,8 +66,8 @@ class IngestPipeline:
         # Remove duplicates
         data = data.drop_duplicates()
         
-        # Fill missing values
-        data = data.fillna(method='ffill')
+        # Fill missing values using forward fill
+        data = data.ffill()
         
         # Normalize date formats
         for col in data.select_dtypes(include=['object']).columns:

@@ -1,4 +1,4 @@
-core/analysis.py"""
+"""
 Analysis Module: Trend, anomaly, ranking, and prediction analysis.
 Orchestrates multi-layer LLM prompts for insight generation.
 """

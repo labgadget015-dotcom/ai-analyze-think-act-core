@@ -1,4 +1,4 @@
-requirements.txt# Core Dependencies
+# Core Dependencies
 pandas==2.0.3
 numpy==1.24.3
 pydantic==2.0.2
@@ -8,16 +8,17 @@ python-dateutil==2.8.2
 openai==0.27.8
 
 # Web Framework (for YouTube app)
-fastapi==0.100.0
+flask==2.3.3
+fastapi==0.109.1  # Updated: Fixed ReDoS vulnerability (CVE)
 uvicorn==0.23.1
-python-multipart==0.0.6
+python-multipart==0.0.18  # Updated: Fixed DoS and ReDoS vulnerabilities
 
 # Database
 SQLAlchemy==2.0.20
 psycopg2-binary==2.9.7  # PostgreSQL adapter
 
 # Authentication
-python-jose==3.3.0
+python-jose==3.4.0  # Updated: Fixed algorithm confusion with OpenSSH ECDSA keys
 passlib==1.7.4
 bcrypt==4.0.1
 
@@ -28,7 +29,7 @@ google-auth-httplib2==0.1.0
 google-api-python-client==2.92.0
 
 # Logging & Monitoring
-python-logging==2.14.2
+# python-logging==2.14.2  # Removed due to compatibility issues
 
 # Testing
 pytest==7.4.0

@@ -12,9 +12,10 @@ import logging
 # Add parent directory for core imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from core.ingest import DataIngestor
-from core.analysis import AnalysisEngine
-from core.recommendations import RecommendationEngine
+from core.ingest import ingest, IngestConfig
+from core.analysis import analyze, AnalysisRequest
+from core.recommendations import recommend, RecommendationRequest
+import pandas as pd
 
 # Setup logging
 logging.basicConfig(
@@ -30,11 +31,6 @@ class WeeklyAnalysisPipeline:
     def __init__(self, channel_id: str, database_url: Optional[str] = None):
         self.channel_id = channel_id
         self.database_url = database_url or os.environ.get('DATABASE_URL')
-        
-        # Initialize core components
-        self.ingestor = DataIngestor()
-        self.analyzer = AnalysisEngine()
-        self.recommender = RecommendationEngine()
         
         logger.info(f"Initialized WeeklyAnalysisPipeline for channel {channel_id}")
     
@@ -108,20 +104,33 @@ class WeeklyAnalysisPipeline:
             raw_data = self.fetch_youtube_data(start_date, end_date)
             logger.info("✓ Data fetched successfully")
             
-            # Step 2: Ingest data
-            ingested_data = self.ingestor.ingest({
-                'source': 'youtube',
-                'channel_id': self.channel_id,
-                'data': raw_data
-            })
-            logger.info("✓ Data ingested successfully")
+            # Step 2: Convert to DataFrame
+            videos_df = pd.DataFrame(raw_data.get('videos', []))
+            
+            # Add channel-level metrics as columns to each video row
+            metrics = raw_data.get('metrics', {})
+            for key, value in metrics.items():
+                videos_df[f'channel_{key}'] = value
+            
+            analysis_df = videos_df
+            logger.info("✓ Data formatted successfully")
             
             # Step 3: Analyze data
-            analysis_results = self.analyzer.analyze(ingested_data)
+            analysis_request = AnalysisRequest(
+                dataset=analysis_df,
+                goal='grow_subscribers',
+                constraints={'budget': 500, 'timeframe_days': 7}
+            )
+            analysis_results = analyze(analysis_request)
             logger.info("✓ Analysis completed successfully")
             
             # Step 4: Generate recommendations
-            recommendations = self.recommender.recommend(analysis_results)
+            recommendation_request = RecommendationRequest(
+                insights={'analysis': analysis_results},
+                goal='grow_subscribers',
+                budget=500
+            )
+            recommendations = recommend(recommendation_request)
             logger.info("✓ Recommendations generated successfully")
             
             # Step 5: Compile report
