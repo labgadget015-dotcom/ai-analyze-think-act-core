@@ -49,9 +49,11 @@ setup(
             "openai>=0.27.8",
         ],
         "web": [
-            "fastapi>=0.100.0",
+            "fastapi>=0.109.1",  # Security: Fixed ReDoS vulnerability
             "uvicorn>=0.23.0",
             "flask>=2.3.0",
+            "python-multipart>=0.0.18",  # Security: Fixed DoS and ReDoS vulnerabilities
+            "python-jose>=3.4.0",  # Security: Fixed algorithm confusion vulnerability
         ],
         "youtube": [
             "google-auth>=2.22.0",
