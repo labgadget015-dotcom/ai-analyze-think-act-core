@@ -1,0 +1,184 @@
+# YouTube Goals Prompt Templates
+# Defines LLM prompt chains for different YouTube growth goals
+
+version: "1.0"
+prompts:
+  
+  # Goal: Grow Subscribers
+  grow_subscribers:
+    description: "Analyze channel performance and generate recommendations to increase subscriber count"
+    chain:
+      - trend
+      - ranking
+      - prediction
+    
+    trend_prompt: |
+      Analyze the following YouTube channel data for subscriber growth trends:
+      
+      Data: {dataset}
+      Timeframe: {timeframe_days} days
+      Current subscribers: {current_subscribers}
+      
+      Identify:
+      1. Upload frequency patterns and their correlation with subscriber growth
+      2. Content types that drive the most new subscribers
+      3. Engagement metrics (likes, comments, shares) vs subscriber conversion
+      4. Seasonal or temporal patterns in subscriber acquisition
+      
+      Provide insights in JSON format with trend name, data points, and confidence level.
+    
+    ranking_prompt: |
+      Rank the following videos by their subscriber acquisition efficiency:
+      
+      Videos: {video_data}
+      
+      Calculate ranking based on:
+      - Subscribers gained per 1000 views
+      - Engagement rate (likes + comments) / views
+      - Click-through rate from impressions
+      - Average view duration vs video length
+      
+      Return top 10 videos with their scores and key success factors.
+    
+    prediction_prompt: |
+      Based on current trends, predict future subscriber growth:
+      
+      Historical data: {historical_data}
+      Current metrics: {current_metrics}
+      
+      Predict:
+      1. Expected subscriber count in 7, 14, and 30 days
+      2. Confidence intervals for each prediction
+      3. Key factors that could accelerate or hinder growth
+      4. Recommended actions to maximize growth trajectory
+      
+      Format as JSON with predictions, confidence levels, and reasoning.
+  
+  # Goal: Increase CTR (Click-Through Rate)
+  increase_ctr:
+    description: "Optimize thumbnails and titles to increase video click-through rates"
+    chain:
+      - anomaly
+      - ranking
+    
+    anomaly_prompt: |
+      Detect anomalies in click-through rate performance:
+      
+      Video data: {video_data}
+      Average CTR: {avg_ctr}%
+      
+      Identify videos that:
+      1. Have significantly higher CTR than average (positive outliers)
+      2. Have significantly lower CTR than average (negative outliers)
+      3. Show unexpected CTR patterns (e.g., high impressions but low CTR)
+      
+      For each anomaly, analyze:
+      - Thumbnail characteristics (colors, text, faces, composition)
+      - Title structure (length, keywords, hooks, punctuation)
+      - Video positioning in search/browse features
+      
+      Return anomalies with deviation scores and hypothesized causes.
+    
+    ranking_prompt: |
+      Rank videos by CTR performance and identify best practices:
+      
+      Videos: {video_data}
+      
+      Rank by:
+      1. Absolute CTR percentage
+      2. CTR improvement over channel average
+      3. Sustained CTR (beyond first 24 hours)
+      
+      For top performers, extract:
+      - Common thumbnail design patterns
+      - Effective title formulas
+      - Optimal title length and keyword placement
+      - Emotional triggers used
+      
+      Provide actionable thumbnail and title templates based on top performers.
+  
+  # Goal: Boost Watch Time
+  boost_watch_time:
+    description: "Increase average view duration and total watch hours"
+    chain:
+      - trend
+      - prediction
+    
+    trend_prompt: |
+      Analyze watch time trends across the channel:
+      
+      Video data: {video_data}
+      Average view duration: {avg_view_duration} minutes
+      Total watch hours: {total_watch_hours}
+      
+      Identify trends in:
+      1. Optimal video length for maximum watch time
+      2. Audience retention curves (where viewers drop off)
+      3. Content pacing patterns in high-retention videos
+      4. Impact of video structure (intro, main content, outro) on retention
+      5. Correlation between video topic and watch time
+      
+      Provide insights on what keeps viewers engaged and where they disengage.
+    
+    prediction_prompt: |
+      Predict watch time performance for future content:
+      
+      Historical retention data: {retention_data}
+      Upcoming content plan: {content_plan}
+      
+      Predict:
+      1. Expected average view duration for different video lengths
+      2. Total watch hours potential for next 30 days
+      3. Impact of implementing retention best practices
+      4. Optimal content mix for maximizing watch time
+      
+      Recommend:
+      - Ideal video length based on topic type
+      - Pacing and editing techniques to improve retention
+      - Content hooks and pattern interrupts to reduce drop-off
+      - Series/playlist strategies to increase session watch time
+
+# Common Parameters
+parameters:
+  temperature: 0.3  # Lower temperature for more consistent, factual analysis
+  max_tokens: 2000
+  model: "gpt-4o"
+  
+  # Data format expectations
+  dataset_schema:
+    video_id: string
+    title: string
+    views: integer
+    likes: integer
+    comments: integer
+    subscribers_gained: integer
+    ctr: float  # percentage
+    avg_view_duration: float  # minutes
+    impressions: integer
+    published_at: datetime
+
+# Output Format
+output_format:
+  trend_analysis:
+    - trend_name: string
+    - data_points: array
+    - confidence: "low" | "medium" | "high"
+    - interpretation: string
+  
+  ranking:
+    - rank: integer
+    - item_id: string
+    - score: float
+    - key_factors: array[string]
+  
+  prediction:
+    - metric: string
+    - prediction: string
+    - confidence: "low" | "medium" | "high"
+    - reasoning: string
+
+# Error Handling
+error_responses:
+  insufficient_data: "Not enough data points to perform reliable analysis. Recommend collecting at least 10 videos or 30 days of data."
+  no_trends_found: "No significant trends detected. Data appears stable or requires longer observation period."
+  high_variance: "Data shows high variance. Predictions have low confidence due to inconsistent patterns."
