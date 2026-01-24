@@ -106,10 +106,13 @@ class WeeklyAnalysisPipeline:
             
             # Step 2: Convert to DataFrame
             videos_df = pd.DataFrame(raw_data.get('videos', []))
-            metrics_df = pd.DataFrame([raw_data.get('metrics', {})])
             
-            # Combine into analysis dataset
-            analysis_df = pd.concat([videos_df, metrics_df], ignore_index=True)
+            # Add channel-level metrics as columns to each video row
+            metrics = raw_data.get('metrics', {})
+            for key, value in metrics.items():
+                videos_df[f'channel_{key}'] = value
+            
+            analysis_df = videos_df
             logger.info("✓ Data formatted successfully")
             
             # Step 3: Analyze data
