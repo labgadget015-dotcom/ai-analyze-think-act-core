@@ -13,9 +13,10 @@ import sys
 # Add parent directory to path for core module imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from core.ingest import DataIngestor
-from core.analysis import AnalysisEngine
-from core.recommendations import RecommendationEngine
+from core.ingest import ingest, IngestConfig
+from core.analysis import analyze, AnalysisRequest
+from core.recommendations import recommend, RecommendationRequest
+import pandas as pd
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-key-change-in-production')
@@ -24,39 +25,62 @@ app.secret_key = os.environ.get('SECRET_KEY', 'dev-key-change-in-production')
 CLIENT_SECRETS_FILE = os.environ.get('CLIENT_SECRETS_FILE', 'credentials.json')
 SCOPES = ['https://www.googleapis.com/auth/youtube.readonly']
 
-# Initialize core framework components
-data_ingestor = DataIngestor()
-analysis_engine = AnalysisEngine()
-recommendation_engine = RecommendationEngine()
-
 
 class YouTubeApp:
     """Main YouTube Intelligence SaaS Application Class"""
     
     def __init__(self):
-        self.ingestor = data_ingestor
-        self.analyzer = analysis_engine
-        self.recommender = recommendation_engine
+        pass
     
-    def process_youtube_data(self, channel_data):
+    def process_youtube_data(self, channel_data, goal='grow_subscribers', budget=0):
         """Full pipeline: ingest -> analyze -> recommend"""
         try:
             # Step 1: Ingest YouTube data
-            ingested_data = self.ingestor.ingest({
-                'source': 'youtube',
-                'data': channel_data
-            })
+            # Convert channel_data to DataFrame format expected by ingest
+            if isinstance(channel_data, dict):
+                df = pd.DataFrame([channel_data])
+            else:
+                df = pd.DataFrame(channel_data)
             
             # Step 2: Analyze data
-            analysis_results = self.analyzer.analyze(ingested_data)
+            analysis_request = AnalysisRequest(
+                dataset=df,
+                goal=goal,
+                constraints={'budget': budget, 'timeframe_days': 30}
+            )
+            analysis_result = analyze(analysis_request)
             
             # Step 3: Generate recommendations
-            recommendations = self.recommender.recommend(analysis_results)
+            recommendation_request = RecommendationRequest(
+                insights={'analysis': analysis_result},
+                goal=goal,
+                budget=budget
+            )
+            recommendations = recommend(recommendation_request)
             
             return {
                 'status': 'success',
-                'analysis': analysis_results,
-                'recommendations': recommendations
+                'analysis': {
+                    'goal': analysis_result.goal,
+                    'diagnosis': analysis_result.diagnosis,
+                    'trends': analysis_result.trends,
+                    'anomalies': analysis_result.anomalies,
+                    'rankings': analysis_result.rankings,
+                    'predictions': analysis_result.predictions,
+                    'metrics_to_watch': analysis_result.metrics_to_watch
+                },
+                'recommendations': [
+                    {
+                        'id': action.id,
+                        'description': action.description,
+                        'priority': action.priority.value,
+                        'effort': action.effort.value,
+                        'expected_impact_metric': action.expected_impact_metric,
+                        'rationale': action.rationale,
+                        'budget_required': action.budget_required
+                    }
+                    for action in recommendations
+                ]
             }
         except Exception as e:
             return {'status': 'error', 'message': str(e)}
