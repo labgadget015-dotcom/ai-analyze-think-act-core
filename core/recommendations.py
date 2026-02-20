@@ -45,7 +45,9 @@ class RecommendationRequest:
 
 class RecommendationGenerator:
     """Generates prioritized actions from insights."""
-    
+
+    _PRIORITY_ORDER = {Priority.CRITICAL: 0, Priority.HIGH: 1, Priority.MEDIUM: 2, Priority.LOW: 3}
+
     def __init__(self):
         self.goal_templates = {
             'grow_subscribers': self._recommend_growth,
@@ -222,8 +224,7 @@ class RecommendationGenerator:
         affordable = [a for a in actions if (a.budget_required or 0) <= budget]
         
         # Sort by priority (high → medium → low)
-        priority_order = {Priority.CRITICAL: 0, Priority.HIGH: 1, Priority.MEDIUM: 2, Priority.LOW: 3}
-        affordable.sort(key=lambda a: priority_order.get(a.priority, 4))
+        affordable.sort(key=lambda a: self._PRIORITY_ORDER.get(a.priority, 4))
         
         return affordable
 

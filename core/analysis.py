@@ -34,7 +34,25 @@ class AnalysisResult:
 
 class AnalysisPipeline:
     """Orchestrates multi-stage analysis with LLM chains."""
-    
+
+    _METRICS_MAP = {
+        'grow_subscribers': [
+            {"metric": "subs_gained", "target": "+50", "period": "7 days"},
+            {"metric": "subscriber_retention", "target": "+3%", "period": "7 days"},
+            {"metric": "engagement_rate", "target": "+5%", "period": "7 days"}
+        ],
+        'increase_ctr': [
+            {"metric": "click_through_rate", "target": "+1.5%", "period": "7 days"},
+            {"metric": "thumbnail_performance", "target": "baseline", "period": "7 days"},
+            {"metric": "title_effectiveness", "target": "baseline", "period": "7 days"}
+        ],
+        'boost_watch_time': [
+            {"metric": "avg_view_duration", "target": "+2min", "period": "7 days"},
+            {"metric": "audience_retention", "target": "+5%", "period": "7 days"},
+            {"metric": "video_completion_rate", "target": "+8%", "period": "7 days"}
+        ]
+    }
+
     def __init__(self):
         self.analysis_stages = {
             'trend': self._analyze_trends,
@@ -83,13 +101,14 @@ class AnalysisPipeline:
         """Identify trends in the dataset."""
         # TODO: Integrate LLM prompt for trend analysis
         # For now, return stub with basic stats
-        if len(data) == 0:
+        record_count = len(data)
+        if record_count == 0:
             return []
         
         return [
             {
-                "insight": f"Dataset contains {len(data)} records over analysis period",
-                "data_point": f"Mean record count: {len(data)}",
+                "insight": f"Dataset contains {record_count} records over analysis period",
+                "data_point": f"Mean record count: {record_count}",
                 "confidence": "high"
             }
         ]
@@ -143,24 +162,7 @@ class AnalysisPipeline:
     
     def _identify_metrics(self, goal: str) -> List[Dict[str, Any]]:
         """Identify key metrics to watch based on goal."""
-        metrics_map = {
-            'grow_subscribers': [
-                {"metric": "subs_gained", "target": "+50", "period": "7 days"},
-                {"metric": "subscriber_retention", "target": "+3%", "period": "7 days"},
-                {"metric": "engagement_rate", "target": "+5%", "period": "7 days"}
-            ],
-            'increase_ctr': [
-                {"metric": "click_through_rate", "target": "+1.5%", "period": "7 days"},
-                {"metric": "thumbnail_performance", "target": "baseline", "period": "7 days"},
-                {"metric": "title_effectiveness", "target": "baseline", "period": "7 days"}
-            ],
-            'boost_watch_time': [
-                {"metric": "avg_view_duration", "target": "+2min", "period": "7 days"},
-                {"metric": "audience_retention", "target": "+5%", "period": "7 days"},
-                {"metric": "video_completion_rate", "target": "+8%", "period": "7 days"}
-            ]
-        }
-        return metrics_map.get(goal, [])
+        return self._METRICS_MAP.get(goal, [])
 
 # Singleton instance
 analysis_pipeline = AnalysisPipeline()
