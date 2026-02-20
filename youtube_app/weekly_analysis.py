@@ -109,8 +109,7 @@ class WeeklyAnalysisPipeline:
             
             # Add channel-level metrics as columns to each video row
             metrics = raw_data.get('metrics', {})
-            for key, value in metrics.items():
-                videos_df[f'channel_{key}'] = value
+            videos_df = videos_df.assign(**{f'channel_{key}': value for key, value in metrics.items()})
             
             analysis_df = videos_df
             logger.info("✓ Data formatted successfully")
