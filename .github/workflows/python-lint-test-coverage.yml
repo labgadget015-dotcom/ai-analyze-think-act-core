@@ -26,7 +26,7 @@ jobs:
           pip install flake8 pytest pytest-cov
 
       - name: Run flake8
-        run: flake8 .
+        run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
 
   test:
     runs-on: ubuntu-latest
@@ -43,9 +43,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest pytest-cov
+          pip install -e ".[dev]"
 
       - name: Run tests with coverage
         run: |
-          pytest --cov=your_package_name tests/
-          # Replace `your_package_name` with the actual package name for coverage
+          pytest --cov=core tests/
