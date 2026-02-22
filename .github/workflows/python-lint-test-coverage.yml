@@ -47,5 +47,4 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          pytest --cov=your_package_name tests/
-          # Replace `your_package_name` with the actual package name for coverage
+          pytest --cov=core tests/
