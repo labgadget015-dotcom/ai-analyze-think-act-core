@@ -70,7 +70,7 @@ class IngestPipeline:
         data = data.ffill()
         
         # Normalize date formats
-        for col in data.select_dtypes(include=['object']).columns:
+        for col in data.select_dtypes(include=['object', 'str']).columns:
             try:
                 data[col] = pd.to_datetime(data[col])
             except:
