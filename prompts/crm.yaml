@@ -1,0 +1,170 @@
+# CRM Intelligence Prompt Templates
+# Defines LLM prompt chains for CRM and sales pipeline goals
+
+version: "1.0"
+domain: "crm"
+prompts:
+
+  # Goal: Improve Response Time
+  improve_response_time:
+    description: "Identify bottlenecks in lead and ticket response workflows to reduce time-to-response"
+    chain:
+      - anomaly
+      - ranking
+
+    anomaly_prompt: |
+      Detect response time anomalies in the following CRM activity data:
+
+      Activity data: {dataset}
+      Average response time: {avg_response_time} hours
+      SLA target: {sla_target} hours
+
+      Identify:
+      1. Leads or tickets with response times significantly above the SLA
+      2. Patterns in which team members, stages, or time periods cause the most delays
+      3. Lead sources or categories that consistently receive slower responses
+
+      For each anomaly:
+      - Quantify the delay (hours above SLA or average)
+      - Identify the responsible stage or owner
+      - Flag recurring patterns vs one-off incidents
+
+      Return anomalies ranked by business impact (deal value × delay).
+
+    ranking_prompt: |
+      Rank process improvements by expected impact on response time:
+
+      Anomaly data: {anomaly_result}
+      Team capacity: {team_capacity}
+
+      Rank improvements by:
+      1. Expected reduction in average response time (hours)
+      2. Number of deals/tickets positively affected
+      3. Implementation effort (automation vs training vs process change)
+
+      For the top 3 improvements, provide:
+      - Specific action (e.g. automated acknowledgement, triage rule, routing logic)
+      - Expected time saving per interaction
+      - Implementation steps and tooling required
+
+  # Goal: Increase Pipeline Health
+  increase_pipeline_health:
+    description: "Improve CRM pipeline quality by identifying stalled deals and optimising stage conversion"
+    chain:
+      - trend
+      - prediction
+
+    trend_prompt: |
+      Analyze the health of the following sales pipeline:
+
+      Pipeline data: {dataset}
+      Analysis period: {timeframe_days} days
+      Total pipeline value: {total_pipeline_value}
+
+      Identify trends in:
+      1. Stage-by-stage conversion rates and where deals are stalling
+      2. Average deal age at each stage vs historical benchmarks
+      3. Win/loss rate over time by deal size, source, or rep
+      4. Velocity changes (deals moving faster or slower through stages)
+      5. Deal value distribution across pipeline stages
+
+      Provide a health score (0-100) for the pipeline with key drivers.
+
+    prediction_prompt: |
+      Predict pipeline outcomes and forecast revenue:
+
+      Historical pipeline: {historical_data}
+      Current stage data: {dataset}
+      Trend analysis: {trend_result}
+
+      Predict:
+      1. Probability of close for each deal in the current pipeline
+      2. Expected revenue for next 30, 60, and 90 days
+      3. Deals at highest risk of being lost (churn indicators)
+      4. Recommended actions to improve close rate by stage
+
+      Format as JSON with deal-level predictions and aggregate forecast.
+
+  # Goal: Qualify Leads
+  qualify_leads:
+    description: "Score and prioritise inbound leads to focus sales effort on highest-value opportunities"
+    chain:
+      - ranking
+      - prediction
+
+    ranking_prompt: |
+      Score and rank the following inbound leads:
+
+      Lead data: {dataset}
+      Ideal customer profile (ICP): {icp_criteria}
+
+      Rank leads by a composite score based on:
+      1. Firmographic fit (company size, industry, geography vs ICP)
+      2. Behavioural signals (page visits, content downloads, demo requests)
+      3. Engagement recency (days since last interaction)
+      4. Budget and timeline indicators from form fills or conversations
+
+      Return each lead with:
+      - Score (0-100)
+      - Qualification tier: HOT / WARM / COLD
+      - Top 3 reasons for the score
+      - Recommended next action (call, nurture sequence, disqualify)
+
+    prediction_prompt: |
+      Predict conversion probability and expected deal value for qualified leads:
+
+      Ranked leads: {ranking_result}
+      Historical conversion data: {historical_data}
+
+      For each HOT or WARM lead, predict:
+      1. Probability of converting to opportunity (%)
+      2. Expected deal size based on similar historical deals
+      3. Estimated time to close
+      4. Recommended outreach sequence (timing, channel, message)
+
+      Prioritise leads by (probability × expected deal value) to maximise rep productivity.
+
+# Common Parameters
+parameters:
+  temperature: 0.3
+  max_tokens: 2000
+  model: "gpt-4o"
+
+  # Expected data schema
+  dataset_schema:
+    lead_id: string
+    company_name: string
+    contact_name: string
+    source: string           # inbound | referral | outbound | event
+    stage: string            # new | qualified | proposal | negotiation | closed_won | closed_lost
+    deal_value: float
+    created_at: datetime
+    last_activity_at: datetime
+    response_time_hours: float
+    owner: string
+
+# Output Format
+output_format:
+  trend_analysis:
+    - trend_name: string
+    - data_points: array
+    - confidence: "low" | "medium" | "high"
+    - interpretation: string
+
+  ranking:
+    - rank: integer
+    - item_id: string
+    - score: float
+    - key_factors: array[string]
+
+  prediction:
+    - metric: string
+    - predicted_value: string
+    - confidence: "low" | "medium" | "high"
+    - reasoning: string
+
+# Error Handling
+error_responses:
+  insufficient_data: "Not enough CRM activity data. Recommend at least 50 leads and 30 days of activity history."
+  no_trends_found: "No significant pipeline trends detected. Data appears stable or requires longer observation."
+  high_variance: "High pipeline variance detected. Predictions have low confidence due to inconsistent deal flow."
