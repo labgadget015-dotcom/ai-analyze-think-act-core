@@ -36,6 +36,7 @@ setup(
         "numpy>=1.24.0",
         "pydantic>=2.0.0",
         "python-dateutil>=2.8.0",
+        "pyyaml>=6.0",
     ],
     extras_require={
         "dev": [

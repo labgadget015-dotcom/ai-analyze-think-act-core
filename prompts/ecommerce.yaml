@@ -1,0 +1,164 @@
+# E-commerce & CRM Intelligence Prompt Templates
+# Defines LLM prompt chains for e-commerce growth goals
+
+version: "1.0"
+domain: "ecommerce"
+prompts:
+
+  # Goal: Revenue Forecast
+  revenue_forecast:
+    description: "Forecast future revenue based on historical order and product data"
+    chain:
+      - trend
+      - prediction
+
+    trend_prompt: |
+      Analyze the following e-commerce sales data for revenue trends:
+
+      Data: {dataset}
+      Timeframe: {timeframe_days} days
+      Total revenue: {total_revenue}
+
+      Identify:
+      1. Weekly and monthly revenue patterns
+      2. Best-performing product categories by revenue and margin
+      3. Seasonality effects and promotional lift
+      4. Average order value (AOV) trend over time
+
+      Provide insights in JSON format with trend name, data points, and confidence level.
+
+    prediction_prompt: |
+      Based on current revenue trends, forecast future performance:
+
+      Historical data: {historical_data}
+      Current metrics: {current_metrics}
+      Trend analysis: {trend_result}
+
+      Predict:
+      1. Expected revenue for next 7, 14, and 30 days
+      2. Confidence intervals for each prediction
+      3. Key drivers that could accelerate or reduce revenue
+      4. Recommended pricing or promotional actions
+
+      Format as JSON with predictions, confidence levels, and reasoning.
+
+  # Goal: Reduce Churn
+  reduce_churn:
+    description: "Identify at-risk customers and recommend retention strategies"
+    chain:
+      - anomaly
+      - ranking
+
+    anomaly_prompt: |
+      Detect customer churn signals in the following CRM data:
+
+      Customer data: {customer_data}
+      Average purchase frequency: {avg_purchase_frequency}
+      Average days since last purchase: {avg_days_since_purchase}
+
+      Identify customers that:
+      1. Have not purchased in significantly longer than their historical average
+      2. Show decreasing order frequency or value over time
+      3. Have unresolved support tickets or negative feedback signals
+
+      For each at-risk segment, analyze:
+      - Purchase recency, frequency, and monetary value (RFM score)
+      - Category or product affinity shifts
+      - Engagement with email/push campaigns
+
+      Return churn risk segments with risk scores and key indicators.
+
+    ranking_prompt: |
+      Rank retention intervention strategies by expected ROI:
+
+      At-risk segments: {anomaly_result}
+      Available budget: {budget}
+
+      Rank interventions by:
+      1. Expected win-back probability per segment
+      2. Lifetime value of recovered customers
+      3. Cost per intervention (discount, email, outreach)
+
+      For the top 3 strategies, provide:
+      - Target segment definition
+      - Recommended offer or message
+      - Estimated cost and expected revenue recovery
+
+  # Goal: Optimize Inventory
+  optimize_inventory:
+    description: "Minimize stockouts and overstock by optimizing reorder timing and quantities"
+    chain:
+      - trend
+      - prediction
+
+    trend_prompt: |
+      Analyze inventory and sales velocity for the following products:
+
+      Inventory data: {inventory_data}
+      Sales velocity (units/day): {sales_velocity}
+
+      Identify:
+      1. Products at risk of stockout within 14 days
+      2. Products with excess inventory (>60 days supply on hand)
+      3. Seasonal demand fluctuations affecting reorder timing
+      4. Supplier lead time variability patterns
+
+      Provide ranked list of products requiring immediate attention.
+
+    prediction_prompt: |
+      Predict optimal reorder points and quantities:
+
+      Historical sales: {historical_data}
+      Current inventory: {inventory_data}
+      Trend analysis: {trend_result}
+
+      Calculate:
+      1. Recommended reorder point (ROP) per product
+      2. Economic order quantity (EOQ) given holding and ordering costs
+      3. Safety stock level based on demand variability
+      4. Total cost impact of implementing recommendations
+
+      Format as a prioritized action list with SKU, quantity, and timing.
+
+# Common Parameters
+parameters:
+  temperature: 0.3
+  max_tokens: 2000
+  model: "gpt-4o"
+
+  # Expected data schema
+  dataset_schema:
+    order_id: string
+    customer_id: string
+    product_sku: string
+    category: string
+    revenue: float
+    quantity: integer
+    order_date: datetime
+    channel: string          # web | mobile | marketplace
+
+# Output Format
+output_format:
+  trend_analysis:
+    - trend_name: string
+    - data_points: array
+    - confidence: "low" | "medium" | "high"
+    - interpretation: string
+
+  ranking:
+    - rank: integer
+    - item_id: string
+    - score: float
+    - key_factors: array[string]
+
+  prediction:
+    - metric: string
+    - prediction: string
+    - confidence: "low" | "medium" | "high"
+    - reasoning: string
+
+# Error Handling
+error_responses:
+  insufficient_data: "Not enough order data. Recommend at least 90 days of transaction history."
+  no_trends_found: "No significant trends detected. Data appears stable or requires longer observation."
+  high_variance: "High revenue variance detected. Predictions have low confidence."
