@@ -25,6 +25,7 @@ def get_prompt_for_goal(goal: str, domain: str = "youtube") -> dict:
     filename_map = {
         "youtube": "youtube_goals.yaml",
         "ecommerce": "ecommerce.yaml",
+        "crm": "crm.yaml",
     }
     filename = filename_map.get(domain, f"{domain}.yaml")
     data = load_prompts(filename)
