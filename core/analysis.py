@@ -3,10 +3,8 @@ Analysis Module: Trend, anomaly, ranking, and prediction analysis.
 Orchestrates multi-layer LLM prompts for insight generation.
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from typing import Dict, Any, List, Optional
-from datetime import datetime
-import json
 import logging
 import pandas as pd
 
