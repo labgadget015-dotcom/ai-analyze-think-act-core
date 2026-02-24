@@ -155,11 +155,18 @@ def youtube_oauth_callback():
 @app.route('/api/v1/analyze', methods=['POST'])
 def analyze_channel():
     """Analyze YouTube channel data endpoint
-    Expected payload: {"channel_id": "...", "video_data": {...}}
+    Expected payload: {"channel_id": "...", "video_data": {...}, "goal": "...", "budget": 0}
     """
     try:
         payload = request.get_json()
-        results = youtube_app.process_youtube_data(payload.get('video_data'))
+        if not payload:
+            return jsonify({'error': 'Request body is required'}), 400
+        goal = payload.get('goal', 'grow_subscribers')
+        try:
+            budget = float(payload.get('budget', 0))
+        except (TypeError, ValueError):
+            return jsonify({'error': 'budget must be a number'}), 400
+        results = youtube_app.process_youtube_data(payload.get('video_data'), goal=goal, budget=budget)
         return jsonify(results), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
@@ -195,5 +202,5 @@ if __name__ == '__main__':
     app.run(
         host=os.environ.get('HOST', 'localhost'),
         port=int(os.environ.get('PORT', 5000)),
-        debug=os.environ.get('DEBUG', False)
+        debug=os.environ.get('DEBUG', '').lower() in ('1', 'true', 'yes')
     )
