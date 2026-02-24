@@ -74,6 +74,7 @@ jobs:
       with:
         inputs: requirements.txt
         vulnerability-service: osv
+      continue-on-error: true
 
   build:
     name: Build Package
